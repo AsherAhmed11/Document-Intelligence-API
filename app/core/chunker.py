@@ -13,7 +13,6 @@ import fitz  # PyMuPDF
 from dataclasses import dataclass
 
 from langchain_experimental.text_splitter import SemanticChunker
-from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
 # ── Tuning knob — this is YOUR decision ───────────────────────────────────────

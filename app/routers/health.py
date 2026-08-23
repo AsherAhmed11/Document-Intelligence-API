@@ -14,8 +14,9 @@ class HealthResponse(BaseModel):
     version: str
 
 
-@router.get(
+@router.api_route(
     "",
+    methods=["GET", "HEAD"],
     response_model=HealthResponse,
     summary="Health Check",
     description="Returns 200 OK if the API is running. Used by Railway for deployment health checks.",
