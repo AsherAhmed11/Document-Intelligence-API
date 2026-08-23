@@ -1,0 +1,137 @@
+SOFTWARE LICENSE AND SERVICE AGREEMENT
+
+This Software License and Service Agreement ("Agreement") is entered into as of the 1st day of January, 2025, by and between TechCorp Solutions Inc., a Delaware corporation ("Licensor"), and GlobalRetail Partners LLC, a New York limited liability company ("Licensee").
+
+SECTION 1. DEFINITIONS
+
+1.1 "Licensed Software" means the proprietary software application known as "DataSync Enterprise," including all modules, updates, patches, and documentation provided by Licensor pursuant to this Agreement.
+
+1.2 "Authorized Users" means the employees, contractors, and agents of Licensee who have been granted access to the Licensed Software as described in Section 3.2 below.
+
+1.3 "Confidential Information" has the meaning given in Section 8.1 of this Agreement.
+
+1.4 "Service Level Agreement" or "SLA" means the performance standards and uptime guarantees as set forth in Exhibit A attached hereto.
+
+1.5 "Effective Date" means the date first written above.
+
+1.6 "Intellectual Property Rights" means all patents, copyrights, trademarks, trade secrets, and other proprietary rights as defined in Section 7.
+
+SECTION 2. GRANT OF LICENSE
+
+2.1 License Grant. Subject to the terms and conditions of this Agreement, Licensor hereby grants to Licensee a non-exclusive, non-transferable, limited license to use the Licensed Software solely for Licensee's internal business operations.
+
+2.2 Restrictions. Licensee shall not: (a) sublicense, sell, or distribute the Licensed Software; (b) reverse engineer, decompile, or disassemble the Licensed Software except as permitted under applicable law; (c) modify or create derivative works based on the Licensed Software without prior written consent of Licensor; or (d) use the Licensed Software in violation of any applicable laws or regulations.
+
+2.3 Scope Limitation. The license granted under Section 2.1 is limited to the number of Authorized Users specified in Exhibit B. Any expansion beyond the authorized scope requires a written amendment pursuant to Section 12.3.
+
+SECTION 3. AUTHORIZED USERS AND ACCESS CONTROL
+
+3.1 User Management. Licensee shall maintain accurate records of all Authorized Users and shall promptly notify Licensor of any changes in accordance with the procedures set out in Section 3.3.
+
+3.2 Access Credentials. Each Authorized User shall be assigned unique login credentials. Licensee is responsible for ensuring that credentials are not shared among users, as provided in the security requirements described in Exhibit C.
+
+3.3 Notification Procedures. Licensee shall notify Licensor within five (5) business days of any addition or removal of Authorized Users by submitting written notice as specified in Section 11.
+
+SECTION 4. FEES AND PAYMENT TERMS
+
+4.1 License Fees. Licensee shall pay to Licensor annual license fees in the amount of $150,000, payable in quarterly installments of $37,500 each, due on the first business day of each calendar quarter.
+
+4.2 Late Payment. Any payment not received within thirty (30) days of the due date shall bear interest at the rate of 1.5% per month, or the maximum rate permitted by law, whichever is less. See Section 10.2 for remedies available to Licensor in the event of non-payment.
+
+4.3 Taxes. All fees are exclusive of applicable taxes. Licensee shall be responsible for all sales, use, and withholding taxes imposed by any governmental authority, as further described in Section 4.5.
+
+4.4 Fee Adjustments. Licensor may adjust license fees upon thirty (30) days' written notice prior to the start of any renewal term, subject to the limitations set forth in Section 9.2.
+
+4.5 Tax Documentation. Licensee shall provide Licensor with valid tax exemption certificates where applicable. Failure to provide such documentation shall result in Licensor collecting and remitting applicable taxes as required by law.
+
+SECTION 5. INDEMNIFICATION
+
+5.1 Indemnification by Licensor. Licensor shall indemnify, defend, and hold harmless Licensee and its officers, directors, employees, and agents from and against any and all claims, damages, losses, and expenses (including reasonable attorneys' fees) arising out of or relating to: (a) any claim that the Licensed Software infringes any third-party intellectual property right; or (b) Licensor's gross negligence or willful misconduct in the performance of its obligations under this Agreement.
+
+5.2 Indemnification by Licensee. Licensee shall indemnify, defend, and hold harmless Licensor from and against any claims arising from: (a) Licensee's unauthorized use or modification of the Licensed Software; (b) Licensee's breach of the confidentiality obligations set forth in Section 8; or (c) any violation of applicable laws in connection with Licensee's use of the Licensed Software.
+
+5.3 Indemnification Procedures. The indemnified party shall: (a) promptly notify the indemnifying party in writing of any claim; (b) grant the indemnifying party sole control of the defense and settlement; and (c) provide reasonable cooperation at the indemnifying party's expense. These procedures are subject to the limitations described in Section 10.1.
+
+SECTION 6. TERM AND TERMINATION
+
+6.1 Initial Term. This Agreement shall commence on the Effective Date and shall continue for a period of three (3) years (the "Initial Term"), unless earlier terminated as provided in Section 6.3.
+
+6.2 Renewal. Upon expiration of the Initial Term, this Agreement shall automatically renew for successive one (1) year periods (each a "Renewal Term"), unless either party provides written notice of non-renewal at least ninety (90) days prior to the expiration of the then-current term.
+
+6.3 Termination for Cause. Either party may terminate this Agreement upon sixty (60) days' written notice if the other party: (a) materially breaches any provision of this Agreement and fails to cure such breach within thirty (30) days after receipt of written notice thereof; or (b) becomes insolvent, files for bankruptcy, or has a receiver appointed for a substantial part of its assets.
+
+6.4 Effect of Termination. Upon termination or expiration of this Agreement: (a) all licenses granted herein shall immediately cease; (b) Licensee shall return or destroy all copies of the Licensed Software and Confidential Information as defined in Section 8.1; (c) Licensee shall pay all outstanding fees as provided in Section 4; and (d) the provisions of Sections 5, 7, 8, 10, and 11 shall survive termination.
+
+SECTION 7. INTELLECTUAL PROPERTY RIGHTS
+
+7.1 Ownership. The Licensed Software and all copies thereof are the exclusive property of Licensor. Nothing in this Agreement shall be construed as transferring any ownership rights to Licensee. All intellectual property rights, including patents, copyrights, and trade secrets, remain with Licensor.
+
+7.2 Feedback. Any suggestions, ideas, or feedback provided by Licensee regarding the Licensed Software ("Feedback") shall become the property of Licensor, and Licensor may use such Feedback without restriction, pursuant to the terms set out in this Section 7.2.
+
+SECTION 8. CONFIDENTIALITY
+
+8.1 Definition. "Confidential Information" means any non-public information disclosed by one party to the other, whether orally or in writing, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and the circumstances of disclosure. Confidential Information includes, but is not limited to, the Licensed Software, source code, business plans, pricing, and customer data.
+
+8.2 Obligations. Each party agrees to: (a) use the other party's Confidential Information solely for purposes of this Agreement; (b) protect such information using at least the same degree of care it uses to protect its own confidential information, but no less than reasonable care; and (c) not disclose such information to any third party except as permitted under Section 8.3.
+
+8.3 Permitted Disclosures. A party may disclose Confidential Information to its employees, contractors, and advisors who have a need to know and are bound by confidentiality obligations at least as protective as those in this Section 8.
+
+SECTION 9. WARRANTIES AND DISCLAIMERS
+
+9.1 Performance Warranty. Licensor warrants that the Licensed Software will perform substantially in accordance with the documentation for a period of twelve (12) months from the Effective Date, subject to the service levels described in the SLA as defined in Section 1.4.
+
+9.2 Disclaimer. EXCEPT AS EXPRESSLY SET FORTH IN SECTION 9.1, THE LICENSED SOFTWARE IS PROVIDED "AS IS." LICENSOR MAKES NO OTHER WARRANTIES, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+
+SECTION 10. LIMITATION OF LIABILITY
+
+10.1 Cap on Liability. IN NO EVENT SHALL EITHER PARTY'S AGGREGATE LIABILITY UNDER THIS AGREEMENT EXCEED THE TOTAL FEES PAID BY LICENSEE DURING THE TWELVE (12) MONTH PERIOD IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO THE CLAIM. This limitation applies to all claims arising under this Agreement, including those described in Section 5.
+
+10.2 Exclusion of Damages. IN NO EVENT SHALL EITHER PARTY BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, REGARDLESS OF THE CAUSE OF ACTION OR THE THEORY OF LIABILITY, EVEN IF SUCH PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. The remedies available under this section are subject to the indemnification obligations set forth in Section 5.
+
+SECTION 11. NOTICES
+
+11.1 Method of Notice. All notices under this Agreement shall be in writing and shall be deemed given when: (a) delivered personally; (b) sent by confirmed email; or (c) three (3) business days after being sent by certified mail, return receipt requested.
+
+11.2 Addresses. Notices shall be sent to the addresses specified in Exhibit D, or to such other address as a party may designate pursuant to this Section 11.
+
+SECTION 12. GENERAL PROVISIONS
+
+12.1 Governing Law. This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of laws principles.
+
+12.2 Dispute Resolution. Any dispute arising under this Agreement shall first be submitted to mediation in accordance with the rules of the American Arbitration Association. If mediation fails, the dispute shall be resolved by binding arbitration, as further described in Exhibit E.
+
+12.3 Amendment. This Agreement may be amended only by a written instrument signed by both parties. No waiver of any provision shall be effective unless in writing and signed by the waiving party.
+
+12.4 Entire Agreement. This Agreement, together with all exhibits attached hereto, constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior agreements and understandings, whether written or oral, relating to such subject matter.
+
+12.5 Severability. If any provision of this Agreement is held invalid or unenforceable, the remaining provisions shall continue in full force and effect. The invalid provision shall be modified to the minimum extent necessary to make it valid and enforceable, consistent with the intent of the parties as expressed in Section 12.4.
+
+12.6 Assignment. Neither party may assign this Agreement without the prior written consent of the other party, except that either party may assign this Agreement to a successor in connection with a merger, acquisition, or sale of substantially all of its assets, provided that the assignee agrees to be bound by the terms hereof as set forth in this Section 12.6.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+LICENSOR:
+TechCorp Solutions Inc.
+By: ___________________________
+Name: Sarah J. Mitchell
+Title: Chief Executive Officer
+
+LICENSEE:
+GlobalRetail Partners LLC
+By: ___________________________
+Name: David R. Thompson
+Title: Managing Director
+
+EXHIBIT A — SERVICE LEVEL AGREEMENT
+
+A.1 Uptime Guarantee. Licensor guarantees 99.9% uptime for the Licensed Software during each calendar month, excluding scheduled maintenance windows as described in Section A.3.
+
+A.2 Response Times. Licensor shall respond to support tickets based on the following severity levels:
+- Critical (system down): Response within 1 hour, resolution within 4 hours
+- High (major feature impaired): Response within 4 hours, resolution within 24 hours  
+- Medium (minor feature impaired): Response within 8 hours, resolution within 72 hours
+- Low (general inquiry): Response within 24 hours
+
+A.3 Scheduled Maintenance. Licensor shall provide at least 48 hours' advance notice of scheduled maintenance. Maintenance windows shall not exceed 4 hours per occurrence and shall be scheduled during off-peak hours (10:00 PM - 6:00 AM EST).
+
+A.4 SLA Credits. If Licensor fails to meet the uptime guarantee in any calendar month, Licensee shall receive service credits as follows: 99.0-99.9% uptime: 5% credit; 95.0-99.0%: 10% credit; below 95.0%: 20% credit. Credits shall be applied against future license fees as provided in Section 4.1.
