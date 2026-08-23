@@ -15,11 +15,12 @@ class Settings(BaseSettings):
     # Providers & Models
     llm_provider: Literal["openai", "bytez"] = "openai"
     llm_model: str = "gpt-4o-mini"
-    embedding_provider: Literal["local", "openai", "bytez"] = "local"
+    embedding_provider: Literal["local", "openai", "bytez", "huggingface"] = "local"
 
     # API Keys
     openai_api_key: str | None = None
     bytez_api_key: str | None = None
+    hf_api_key: str | None = None
 
     # ChromaDB
     chroma_persist_directory: str = "./chroma_store"

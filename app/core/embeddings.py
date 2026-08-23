@@ -1,20 +1,43 @@
 import asyncio
 from dataclasses import dataclass
-from typing import Optional
 import httpx
 from langchain_core.embeddings import Embeddings
 from app.config import Settings
 
+
 @dataclass
 class EmbeddingResult:
-    model_name: str 
+    model_name: str
     vector: list[float]
     dimensions: int
 
 
+def _parse_hf_response(response_data, model_name: str) -> list[EmbeddingResult]:
+    """
+    Parse HuggingFace Inference API response into EmbeddingResults.
+    HF returns either:
+      - 2D list: [[float, ...], [float, ...]]  for batch inputs
+      - 3D list: [[[float, ...]], [[float, ...]]]  for some pooled models
+    """
+    results = []
+    for item in response_data:
+        # If pooled output is nested: [[vec]] → take item[0]
+        vec = item[0] if isinstance(item[0], list) else item
+        results.append(EmbeddingResult(
+            model_name=model_name,
+            vector=vec,
+            dimensions=len(vec),
+        ))
+    return results
+
+
 class EmbeddingClient:
     """
-    Wrapper around sentence-transformers / OpenAI / Bytez embedding APIs.
+    Embedding client supporting:
+      - huggingface: HuggingFace Inference API (free tier, no local model download)
+      - local:       sentence-transformers (requires PyTorch, not suitable for free hosting)
+      - openai:      OpenAI Embeddings API
+      - bytez:       Bytez API
     """
 
     def __init__(self, settings: Settings):
@@ -38,78 +61,75 @@ class EmbeddingClient:
             self._openai_client = AsyncOpenAI(
                 api_key=settings.openai_api_key
             )
+        # huggingface provider: stateless — API key used per-request via httpx
+
+    # ── Sync methods (used by LangChainEmbeddingWrapper / SemanticChunker) ────
 
     def embed_batch_sync(self, texts: list[str]) -> list[EmbeddingResult]:
         """Embed a batch of strings synchronously."""
         if self.provider == "local":
             vectors = self.model.encode(texts, show_progress_bar=False)
             return [
-                EmbeddingResult(
-                    model_name=self.model_name,
-                    vector=vec.tolist(),
-                    dimensions=len(vec),
-                )
+                EmbeddingResult(model_name=self.model_name, vector=vec.tolist(), dimensions=len(vec))
                 for vec in vectors
             ]
-        elif self.provider == "bytez":
+
+        elif self.provider == "huggingface":
+            url = f"https://api-inference.huggingface.co/models/{self.model_name}"
             headers = {
-                "Authorization": f"Bearer {self.settings.bytez_api_key}" if self.settings.bytez_api_key and not self.settings.bytez_api_key.startswith("Bearer") else self.settings.bytez_api_key,
-                "Content-Type": "application/json"
+                "Authorization": f"Bearer {self.settings.hf_api_key}",
+                "Content-Type": "application/json",
             }
-            # Make sure we clean up the authorization header if needed
+            # HF Inference API: process in safe batch sizes to avoid timeouts
+            all_results: list[EmbeddingResult] = []
+            batch_size = 32
+            for i in range(0, len(texts), batch_size):
+                batch = texts[i : i + batch_size]
+                with httpx.Client(timeout=120.0) as client:
+                    response = client.post(url, json={"inputs": batch}, headers=headers)
+                    response.raise_for_status()
+                all_results.extend(_parse_hf_response(response.json(), self.model_name))
+            return all_results
+
+        elif self.provider == "bytez":
             auth_val = self.settings.bytez_api_key or ""
             if auth_val and not auth_val.startswith("Bearer "):
                 auth_val = f"Bearer {auth_val}"
-            headers["Authorization"] = auth_val
-
+            headers = {"Authorization": auth_val, "Content-Type": "application/json"}
             url = "https://api.bytez.com/models/v2/openai/v1/embeddings"
-            payload = {
-                "model": self.model_name,
-                "input": texts
-            }
             with httpx.Client(timeout=60.0) as client:
-                response = client.post(url, json=payload, headers=headers)
+                response = client.post(url, json={"model": self.model_name, "input": texts}, headers=headers)
                 response.raise_for_status()
                 data = response.json()
             return [
-                EmbeddingResult(
-                    model_name=self.model_name,
-                    vector=item["embedding"],
-                    dimensions=len(item["embedding"]),
-                )
+                EmbeddingResult(model_name=self.model_name, vector=item["embedding"], dimensions=len(item["embedding"]))
                 for item in data["data"]
             ]
+
         elif self.provider == "openai":
-            headers = {
-                "Authorization": f"Bearer {self.settings.openai_api_key}",
-                "Content-Type": "application/json"
-            }
-            url = "https://api.openai.com/v1/embeddings"
-            model_name = "text-embedding-3-small"
-            if "large" in self.model_name.lower():
-                model_name = "text-embedding-3-large"
-            payload = {
-                "model": model_name,
-                "input": texts
-            }
+            model_name = "text-embedding-3-large" if "large" in self.model_name.lower() else "text-embedding-3-small"
+            headers = {"Authorization": f"Bearer {self.settings.openai_api_key}", "Content-Type": "application/json"}
             with httpx.Client(timeout=60.0) as client:
-                response = client.post(url, json=payload, headers=headers)
+                response = client.post(
+                    "https://api.openai.com/v1/embeddings",
+                    json={"model": model_name, "input": texts},
+                    headers=headers
+                )
                 response.raise_for_status()
                 data = response.json()
             return [
-                EmbeddingResult(
-                    model_name=self.model_name,
-                    vector=item["embedding"],
-                    dimensions=len(item["embedding"]),
-                )
+                EmbeddingResult(model_name=self.model_name, vector=item["embedding"], dimensions=len(item["embedding"]))
                 for item in data["data"]
             ]
+
         else:
             raise ValueError(f"Unknown embedding provider: {self.provider}")
 
     def embed_sync(self, text: str) -> EmbeddingResult:
         """Embed a single string synchronously."""
         return self.embed_batch_sync([text])[0]
+
+    # ── Async methods (used by DocumentService / QueryService) ────────────────
 
     async def embed(self, text: str) -> EmbeddingResult:
         """Embed a single string (async wrapper)."""
@@ -119,44 +139,45 @@ class EmbeddingClient:
     async def embed_batch(self, texts: list[str]) -> list[EmbeddingResult]:
         """Embed a batch of strings (async)."""
         if self.provider == "local":
-            vectors = await asyncio.to_thread(
-                self.model.encode, texts, show_progress_bar=False
-            )
+            vectors = await asyncio.to_thread(self.model.encode, texts, show_progress_bar=False)
             return [
-                EmbeddingResult(
-                    model_name=self.model_name,
-                    vector=vec.tolist(),
-                    dimensions=len(vec),
-                )
+                EmbeddingResult(model_name=self.model_name, vector=vec.tolist(), dimensions=len(vec))
                 for vec in vectors
             ]
+
+        elif self.provider == "huggingface":
+            url = f"https://api-inference.huggingface.co/models/{self.model_name}"
+            headers = {
+                "Authorization": f"Bearer {self.settings.hf_api_key}",
+                "Content-Type": "application/json",
+            }
+            all_results: list[EmbeddingResult] = []
+            batch_size = 32
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                for i in range(0, len(texts), batch_size):
+                    batch = texts[i : i + batch_size]
+                    response = await client.post(url, json={"inputs": batch}, headers=headers)
+                    response.raise_for_status()
+                    all_results.extend(_parse_hf_response(response.json(), self.model_name))
+            return all_results
+
         elif self.provider in ("bytez", "openai"):
             model_name = self.model_name
             if self.provider == "openai":
-                if "large" in self.model_name.lower():
-                    model_name = "text-embedding-3-large"
-                else:
-                    model_name = "text-embedding-3-small"
-            
-            response = await self._openai_client.embeddings.create(
-                model=model_name,
-                input=texts
-            )
+                model_name = "text-embedding-3-large" if "large" in self.model_name.lower() else "text-embedding-3-small"
+            response = await self._openai_client.embeddings.create(model=model_name, input=texts)
             return [
-                EmbeddingResult(
-                    model_name=self.model_name,
-                    vector=data.embedding,
-                    dimensions=len(data.embedding),
-                )
+                EmbeddingResult(model_name=self.model_name, vector=data.embedding, dimensions=len(data.embedding))
                 for data in response.data
             ]
+
         else:
             raise ValueError(f"Unknown embedding provider: {self.provider}")
 
 
 class LangChainEmbeddingWrapper(Embeddings):
     """
-    Adapter class to wrap EmbeddingClient as a LangChain Embeddings model
+    Adapter wrapping EmbeddingClient as a LangChain Embeddings interface
     for SemanticChunker compatibility.
     """
 
