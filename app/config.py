@@ -25,9 +25,11 @@ class Settings(BaseSettings):
     chroma_persist_directory: str = "./chroma_store"
     chroma_collection_name: str = "documents"
 
-    # Embedding model — set this after running scripts/compare_embeddings.py
-    # Options: BAAI/bge-large-en-v1.5 | BAAI/bge-base-en-v1.5 | sentence-transformers/all-MiniLM-L6-v2
-    embedding_model: str = "BAAI/bge-large-en-v1.5"
+    # Embedding model
+    # - For Railway free tier (512MB RAM): sentence-transformers/all-MiniLM-L6-v2  (~90MB, fast)
+    # - For self-hosted / Railway Pro (>1GB RAM): BAAI/bge-large-en-v1.5  (best accuracy, 1.3GB)
+    # Override this via EMBEDDING_MODEL env var in Railway Variables.
+    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
 
     # Semantic chunker tuning — higher = fewer, larger chunks (better for dense legal text)
     # Range: 80–99. Tune by inspecting chunks on your actual documents.
