@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     debug: bool = False
 
     # Providers & Models
-    llm_provider: Literal["openai", "bytez"] = "openai"
-    llm_model: str = "gpt-4o-mini"
+    llm_provider: Literal["openai", "bytez", "huggingface"] = "huggingface"
+    llm_model: str = "meta-llama/Llama-3.3-70B-Instruct"
     embedding_provider: Literal["local", "openai", "bytez", "huggingface"] = "local"
 
     # API Keys

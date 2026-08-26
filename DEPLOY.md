@@ -9,7 +9,9 @@ Cold starts are ~30s on first request. After that, responses are fast.
 
 - GitHub account with this repo pushed
 - Railway account: https://railway.app (sign in with GitHub)
-- An OpenAI API key (or Bytez key)
+- **HuggingFace account** (free): https://huggingface.co → Settings → Access Tokens → create a **Read** token
+
+> **Only ONE free API key needed — HuggingFace powers both embeddings and LLM chat.**
 
 ---
 
@@ -18,14 +20,9 @@ Cold starts are ~30s on first request. After that, responses are fast.
 ```bash
 cd "g:\Projects\Document Intelligence API"
 
-git init
 git add .
-git commit -m "Initial commit — Document Intelligence API"
-
-# Create a new repo on github.com, then:
-git remote add origin https://github.com/YOUR_USERNAME/document-intelligence-api.git
-git branch -M main
-git push -u origin main
+git commit -m "Switch to HuggingFace free API for Railway"
+git push origin main
 ```
 
 > ⚠️ **Confirm `.env` is in `.gitignore` before pushing** — your API keys must NOT go to GitHub.
@@ -49,10 +46,10 @@ In the Railway dashboard → your service → **Variables** tab, add:
 
 | Key | Value |
 |---|---|
-| `OPENAI_API_KEY` | `sk-proj-...` (your OpenAI key) |
-| `LLM_PROVIDER` | `openai` |
-| `LLM_MODEL` | `gpt-4o-mini` |
-| `EMBEDDING_PROVIDER` | `local` |
+| `HF_API_KEY` | `hf_...` (your HuggingFace read token) |
+| `LLM_PROVIDER` | `huggingface` |
+| `LLM_MODEL` | `meta-llama/Llama-3.3-70B-Instruct` |
+| `EMBEDDING_PROVIDER` | `huggingface` |
 | `EMBEDDING_MODEL` | `BAAI/bge-large-en-v1.5` |
 | `DEBUG` | `false` |
 | `CHROMA_PERSIST_DIRECTORY` | `./chroma_store` |
@@ -61,17 +58,16 @@ In the Railway dashboard → your service → **Variables** tab, add:
 
 > **Note:** Railway automatically injects `PORT`. Do NOT set it manually — the Dockerfile already handles it.
 
+> **Why HuggingFace for everything?**
+> - Embeddings + LLM both run on HuggingFace's servers (free)
+> - No local model download needed — stays under Railway's 512MB RAM limit
+> - Only ONE API key to manage
+
 ---
 
-## Step 4 — Wait for Build (~5–10 min first time)
+## Step 4 — Wait for Build (~3–5 min)
 
-The first build downloads:
-- Python 3.11 slim base image
-- All pip dependencies (including `sentence-transformers` and `BAAI/bge-large-en-v1.5`)
-
-BGE-Large is ~1.3GB. The model downloads at **first request**, not at build time.
-
-To force it to download at startup (avoiding cold-start delay on first query), you can add a startup script — but for a portfolio demo, cold-start is acceptable.
+The build is much faster now since no heavy ML models are downloaded at build time.
 
 ---
 
@@ -108,10 +104,10 @@ https://your-service-name.up.railway.app/docs
 
 | Issue | Fix |
 |---|---|
-| Build fails — `langchain_community` not found | Confirm `langchain-community>=0.2.0` is in `requirements.txt` |
-| 500 on first upload | Check Railway logs — BGE-Large may still be downloading |
+| Build fails — OOM / memory crash | Ensure `EMBEDDING_PROVIDER=huggingface` (NOT `local`) |
+| 500 on upload — HuggingFace timeout | Model may be cold-starting on HF servers. Retry in 30s. |
+| 500 on query — HF auth error | Verify `HF_API_KEY` is set correctly in Railway Variables |
 | `EMBEDDING_MODEL not set` error | Add `EMBEDDING_MODEL` to Railway variables |
-| Cold start >60s | Normal for BGE-Large first load. Subsequent requests are fast. |
 
 ---
 

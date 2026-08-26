@@ -36,7 +36,12 @@ class QueryService:
         )
 
         # Initialize LLM Client
-        if settings.llm_provider == "bytez":
+        if settings.llm_provider == "huggingface":
+            self.openai_client = AsyncOpenAI(
+                api_key=settings.hf_api_key,
+                base_url="https://router.huggingface.co/v1"
+            )
+        elif settings.llm_provider == "bytez":
             self.openai_client = AsyncOpenAI(
                 api_key=settings.bytez_api_key,
                 base_url="https://api.bytez.com/models/v2/openai/v1"
