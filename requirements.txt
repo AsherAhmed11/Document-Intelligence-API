@@ -11,9 +11,10 @@ python-docx>=1.1.0            # DOCX support
 # Vector store
 chromadb>=0.5.0
 
-# Google Gemini — embeddings (text-embedding-004) + LLM (gemini-2.0-flash)
+# Google Gemini — embeddings (gemini-embedding-001) + LLM (gemini-3.6-flash)
 # Zero local RAM: all inference runs on Google's servers
-google-generativeai>=0.8.0
+google-genai>=0.3.0          # new SDK: provides `from google import genai`
+google-generativeai>=0.8.0   # kept for model listing compatibility
 
 # Dev / testing
 python-dotenv>=1.0.0
