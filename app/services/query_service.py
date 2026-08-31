@@ -39,11 +39,14 @@ RULES:
 
 GENERAL_KNOWLEDGE_SYSTEM_PROMPT = """You are an expert Q&A assistant.
 Answer the user's question accurately using your general knowledge.
-At the beginning of your answer, explicitly note that this answer is based on general knowledge as no document context was supplied or matched.
+At the beginning of your answer, explicitly note that this response is based on general knowledge because the specific details were not found in the uploaded document.
+
+CRITICAL REQUIREMENT FOR GENERAL KNOWLEDGE:
+At the bottom of your answer, you MUST provide a dedicated "General References & Verification Sources:" section listing 2-3 standard, reputable reference sources (such as Cornell Law School Legal Information Institute, Black's Law Dictionary, official documentation, or standard legal/technical treatises) so the user can independently verify the answer.
 
 Return ONLY valid JSON matching this schema:
 {
-  "answer": "Note: This response is based on general knowledge as relevant details were not found in the document.\\n\\n[Your detailed answer]",
+  "answer": "Note: This response is based on general knowledge as relevant details were not found in the document.\\n\\n[Your detailed answer]\\n\\nGeneral References & Verification Sources:\\n1. [Source 1 Name / Reference]\\n2. [Source 2 Name / Reference]",
   "citations": [],
   "needs_followup": false,
   "refs_to_fetch": [],
@@ -298,10 +301,11 @@ class QueryService:
         answer_found = args.get("answer_found", True)
         raw_answer = args.get("answer", "")
 
-        # If LLM said answer wasn't in document context, check if we need GK fallback text
-        if not answer_found and ("general knowledge" not in raw_answer.lower() and "not found" not in raw_answer.lower()):
+        # If LLM indicates the context does not contain the answer, perform General Knowledge fallback with verification sources
+        if not answer_found or "unable to answer" in raw_answer.lower() or "does not contain" in raw_answer.lower():
             gk_res = await self._general_knowledge_fallback(question)
             raw_answer = gk_res.get("answer", raw_answer)
+            answer_found = False
 
         cited_indices = sorted({int(i) for i in re.findall(r'\[(\d+)\]', raw_answer)})
 
