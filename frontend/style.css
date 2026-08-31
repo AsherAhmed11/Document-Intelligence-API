@@ -95,8 +95,27 @@ body {
   font-weight: 500;
 }
 
+#general-chat-btn {
+  margin: 12px 14px 4px;
+  width: calc(100% - 28px);
+  padding: 10px 14px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-sm);
+  color: var(--accent-3);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+#general-chat-btn:hover { background: rgba(99, 102, 241, 0.22); border-color: var(--accent-1); }
+
 #new-upload-btn {
-  margin: 14px 14px 8px;
+  margin: 4px 14px 8px;
   width: calc(100% - 28px);
   padding: 10px 14px;
   background: var(--accent-grad);
@@ -114,6 +133,29 @@ body {
 }
 #new-upload-btn:hover { opacity: 0.88; transform: translateY(-1px); }
 #new-upload-btn:active { transform: translateY(0); }
+
+#or-general-wrap {
+  width: 100%;
+  max-width: 540px;
+  text-align: center;
+}
+#or-general-btn {
+  padding: 10px 20px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 20px;
+  color: var(--accent-3);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+#or-general-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--accent-1);
+  transform: translateY(-1px);
+}
 
 #doc-list-label {
   padding: 12px 18px 6px;

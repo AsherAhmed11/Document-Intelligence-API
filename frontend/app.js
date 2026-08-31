@@ -2,8 +2,8 @@
  * DocIntel — Frontend Application Logic
  * 
  * State:
- *   activeDocId    — the currently selected document's ID
- *   activeDocName  — filename of the selected document
+ *   activeDocId    — document ID or 'general'
+ *   activeDocName  — filename or 'General Knowledge AI'
  *   activeDocMeta  — subtitle metadata
  *   documents      — array of all uploaded documents
  *   citations      — array of citation objects from the latest query response
@@ -37,17 +37,21 @@ function showUploadView() {
   resetUploadUI();
 }
 
+function openGeneralChat() {
+  showChatView('general', 'General Knowledge AI', 'Ask anything — no document upload needed');
+}
+
 function showChatView(docId, docName, docMeta) {
-  activeDocId = docId;
-  activeDocName = docName;
+  activeDocId = docId || 'general';
+  activeDocName = docName || 'General Knowledge AI';
   activeDocMeta = docMeta || '';
 
   document.getElementById('upload-view').classList.remove('active');
   document.getElementById('chat-view').classList.add('active');
 
-  document.getElementById('chat-doc-name').textContent = docName;
+  document.getElementById('chat-doc-name').textContent = activeDocName;
   document.getElementById('chat-doc-meta').textContent = activeDocMeta;
-  document.getElementById('welcome-doc-name').textContent = docName;
+  document.getElementById('welcome-doc-name').textContent = activeDocName;
 
   startNewChat();
 
@@ -59,16 +63,27 @@ function showChatView(docId, docName, docMeta) {
 
 function startNewChat() {
   const msgs = document.getElementById('chat-messages');
+  const isGeneral = activeDocId === 'general';
+
+  const welcomeText = isGeneral
+    ? "I'm your General Knowledge AI powered by Gemini. Ask me anything!"
+    : `I've read <strong id="welcome-doc-name">${escapeHtml(activeDocName)}</strong>. Ask me anything about it!`;
+
+  const chips = isGeneral
+    ? `<button class="suggestion-chip" onclick="askSuggestion('What is the difference between NDA and Non-Compete?')">NDA vs Non-Compete</button>
+       <button class="suggestion-chip" onclick="askSuggestion('How does vector embeddings work in RAG?')">How Vector RAG works</button>
+       <button class="suggestion-chip" onclick="askSuggestion('What is SEC EDGAR?')">What is SEC EDGAR?</button>
+       <button class="suggestion-chip" onclick="askSuggestion('Explain smart contracts in simple terms')">Smart Contracts</button>`
+    : `<button class="suggestion-chip" onclick="askSuggestion('What is this document about?')">What is this document about?</button>
+       <button class="suggestion-chip" onclick="askSuggestion('What are the key terms and conditions?')">Key terms & conditions</button>
+       <button class="suggestion-chip" onclick="askSuggestion('Who are the parties involved?')">Who are the parties?</button>
+       <button class="suggestion-chip" onclick="askSuggestion('What are the main obligations?')">Main obligations</button>`;
+
   msgs.innerHTML = `
     <div id="chat-welcome">
       <div id="chat-welcome-icon">🤖</div>
-      <p>I've read <strong id="welcome-doc-name">${escapeHtml(activeDocName)}</strong>. Ask me anything about it!</p>
-      <div id="suggested-questions">
-        <button class="suggestion-chip" onclick="askSuggestion('What is this document about?')">What is this document about?</button>
-        <button class="suggestion-chip" onclick="askSuggestion('What are the key terms and conditions?')">Key terms & conditions</button>
-        <button class="suggestion-chip" onclick="askSuggestion('Who are the parties involved?')">Who are the parties?</button>
-        <button class="suggestion-chip" onclick="askSuggestion('What are the main obligations?')">Main obligations</button>
-      </div>
+      <p>${welcomeText}</p>
+      <div id="suggested-questions">${chips}</div>
     </div>`;
 
   document.getElementById('chat-input').value = '';
@@ -98,7 +113,7 @@ function renderDocList() {
           <rect x="8" y="4" width="24" height="32" rx="3" stroke="#a78bfa" stroke-width="2"/>
           <path d="M14 14h12M14 20h8M14 26h10" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <p>No documents yet.<br/>Upload one to get started.</p>
+        <p>No documents yet.<br/>Upload one or ask general questions.</p>
       </div>`;
     return;
   }
@@ -282,11 +297,16 @@ function askSuggestion(q) {
 }
 
 async function sendQuestion() {
-  if (isQuerying || !activeDocId) return;
+  if (isQuerying) return;
 
   const input = document.getElementById('chat-input');
   const question = input.value.trim();
   if (!question || question.length < 2) return;
+
+  // If user sends question from upload view or without selecting doc, switch to general chat
+  if (!activeDocId) {
+    openGeneralChat();
+  }
 
   isQuerying = true;
   input.value = '';
@@ -320,8 +340,12 @@ async function sendQuestion() {
 
   forceScrollBottom();
 
+  const queryUrl = (activeDocId && activeDocId !== 'general')
+    ? `${API_BASE}/documents/${activeDocId}/query`
+    : `${API_BASE}/query`;
+
   try {
-    const res = await fetch(`${API_BASE}/documents/${activeDocId}/query`, {
+    const res = await fetch(queryUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question, top_k: 6 }),

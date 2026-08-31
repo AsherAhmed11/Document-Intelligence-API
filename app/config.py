@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # openai = OpenAI API
     # local  = sentence-transformers (NOT suitable for Railway free tier)
     llm_provider: Literal["gemini", "openai", "huggingface"] = "gemini"
-    llm_model: str = "gemini-3.6-flash"
+    llm_model: str = "gemini-2.5-flash"
 
     embedding_provider: Literal["gemini", "openai", "local", "huggingface"] = "gemini"
     embedding_model: str = "gemini-embedding-001"

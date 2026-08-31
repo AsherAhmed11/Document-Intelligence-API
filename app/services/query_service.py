@@ -193,6 +193,17 @@ class QueryService:
     ) -> QueryResponse:
         """Core RAG pipeline: embed → retrieve → (optional cross-ref hop) → generate → cite / fallback."""
 
+        # Direct General Knowledge query (no document selected/uploaded)
+        if document_id in ["general", "none", ""]:
+            gk_res = await self._general_knowledge_fallback(question)
+            return QueryResponse(
+                document_id="general",
+                question=question,
+                answer=gk_res.get("answer", "No answer could be generated."),
+                citations=[],
+                answer_found=False,
+            )
+
         # Step 1: Embed the question
         question_emb = await self._embed_client.embed(question)
 
