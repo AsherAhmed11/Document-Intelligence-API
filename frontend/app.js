@@ -1,20 +1,20 @@
 /**
  * DocIntel — Frontend Application Logic
  * 
- * No framework, no build step. Pure JS talking to the FastAPI backend.
- * 
  * State:
  *   activeDocId    — the currently selected document's ID
  *   activeDocName  — filename of the selected document
+ *   activeDocMeta  — subtitle metadata
  *   documents      — array of all uploaded documents
  *   citations      — array of citation objects from the latest query response
  *   isQuerying     — prevents double-sends
  */
 
-const API_BASE = '';  // same origin — FastAPI serves both frontend and API
+const API_BASE = '';  // same origin
 
 let activeDocId = null;
 let activeDocName = '';
+let activeDocMeta = '';
 let documents = [];
 let citations = [];
 let isQuerying = false;
@@ -23,7 +23,6 @@ let selectedFile = null;
 // ── Initialise ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadDocuments();
-  // Show upload view by default
   showUploadView();
 });
 
@@ -33,29 +32,37 @@ function showUploadView() {
   document.getElementById('chat-view').classList.remove('active');
   activeDocId = null;
   activeDocName = '';
-  // Remove active highlight from doc list
+  activeDocMeta = '';
   document.querySelectorAll('.doc-item').forEach(el => el.classList.remove('active'));
-  // Reset upload state
   resetUploadUI();
 }
 
 function showChatView(docId, docName, docMeta) {
   activeDocId = docId;
   activeDocName = docName;
+  activeDocMeta = docMeta || '';
+
   document.getElementById('upload-view').classList.remove('active');
   document.getElementById('chat-view').classList.add('active');
 
-  // Update header
   document.getElementById('chat-doc-name').textContent = docName;
-  document.getElementById('chat-doc-meta').textContent = docMeta || '';
+  document.getElementById('chat-doc-meta').textContent = activeDocMeta;
   document.getElementById('welcome-doc-name').textContent = docName;
 
-  // Clear previous messages
+  startNewChat();
+
+  // Highlight in sidebar
+  document.querySelectorAll('.doc-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.docId === docId);
+  });
+}
+
+function startNewChat() {
   const msgs = document.getElementById('chat-messages');
   msgs.innerHTML = `
     <div id="chat-welcome">
       <div id="chat-welcome-icon">🤖</div>
-      <p>I've read <strong id="welcome-doc-name">${escapeHtml(docName)}</strong>. Ask me anything about it!</p>
+      <p>I've read <strong id="welcome-doc-name">${escapeHtml(activeDocName)}</strong>. Ask me anything about it!</p>
       <div id="suggested-questions">
         <button class="suggestion-chip" onclick="askSuggestion('What is this document about?')">What is this document about?</button>
         <button class="suggestion-chip" onclick="askSuggestion('What are the key terms and conditions?')">Key terms & conditions</button>
@@ -64,12 +71,9 @@ function showChatView(docId, docName, docMeta) {
       </div>
     </div>`;
 
+  document.getElementById('chat-input').value = '';
   document.getElementById('chat-input').focus();
-
-  // Highlight in sidebar
-  document.querySelectorAll('.doc-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.docId === docId);
-  });
+  document.getElementById('scroll-bottom-btn').style.display = 'none';
 }
 
 // ── Document List ─────────────────────────────────────────────────────────────
@@ -172,11 +176,9 @@ function setSelectedFile(file) {
     selectedFile = null;
     return;
   }
-  // Show filename
   document.getElementById('drop-text').style.display = 'none';
   document.getElementById('drop-selected').style.display = 'block';
   document.getElementById('selected-filename').textContent = `📎 ${file.name}`;
-  // Auto-upload
   uploadFile(file);
 }
 
@@ -189,7 +191,6 @@ async function uploadFile(file) {
   progressWrap.style.display = 'flex';
   msgEl.style.display = 'none';
 
-  // Animate progress bar (fake progress — real upload is one request)
   let pct = 0;
   const progressInterval = setInterval(() => {
     pct = Math.min(pct + Math.random() * 12, 88);
@@ -223,17 +224,15 @@ async function uploadFile(file) {
       'success'
     );
 
-    // Add to local list and refresh sidebar
     await loadDocuments();
 
-    // Auto-open the chat after 1.5s
     setTimeout(() => {
       showChatView(
         data.document_id,
         data.filename,
         `${data.chunk_count} chunks`
       );
-    }, 1500);
+    }, 1200);
 
   } catch (err) {
     clearInterval(progressInterval);
@@ -274,7 +273,7 @@ function handleChatKey(e) {
 
 function autoResize(el) {
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 function askSuggestion(q) {
@@ -287,14 +286,13 @@ async function sendQuestion() {
 
   const input = document.getElementById('chat-input');
   const question = input.value.trim();
-  if (!question || question.length < 3) return;
+  if (!question || question.length < 2) return;
 
   isQuerying = true;
   input.value = '';
   input.style.height = 'auto';
   document.getElementById('chat-send-btn').disabled = true;
 
-  // Remove welcome message if still present
   const welcome = document.getElementById('chat-welcome');
   if (welcome) welcome.remove();
 
@@ -320,7 +318,7 @@ async function sendQuestion() {
       </div>
     </div>`);
 
-  scrollToBottom(msgs);
+  forceScrollBottom();
 
   try {
     const res = await fetch(`${API_BASE}/documents/${activeDocId}/query`, {
@@ -330,18 +328,13 @@ async function sendQuestion() {
     });
 
     const data = await res.json();
-
-    // Remove loading indicator
     document.getElementById(loadingId)?.remove();
 
     if (!res.ok) {
       throw new Error(data.detail || `HTTP ${res.status}`);
     }
 
-    // Store citations for the modal
     citations = data.citations || [];
-
-    // Render answer
     renderAnswer(msgs, data);
 
   } catch (err) {
@@ -357,14 +350,13 @@ async function sendQuestion() {
     isQuerying = false;
     document.getElementById('chat-send-btn').disabled = false;
     input.focus();
-    scrollToBottom(msgs);
+    forceScrollBottom();
   }
 }
 
 function renderAnswer(msgs, data) {
   const { answer, citations: cits, answer_found } = data;
 
-  // Format the answer text — render [N] as styled inline refs
   let answerHtml = escapeHtml(answer).replace(/\[(\d+)\]/g, (match, n) => {
     const idx = parseInt(n) - 1;
     const cit = cits && cits[idx];
@@ -372,10 +364,8 @@ function renderAnswer(msgs, data) {
     return `<span class="inline-ref" data-citation-idx="${idx}">[${n}]</span>`;
   });
 
-  // Convert plain newlines to <br>
   answerHtml = answerHtml.replace(/\n/g, '<br>');
 
-  // Build citation chips
   let citHtml = '';
   if (cits && cits.length > 0) {
     const chips = cits.map((c, i) => {
@@ -389,9 +379,9 @@ function renderAnswer(msgs, data) {
     citHtml = `<div class="citations-wrap">${chips}</div>`;
   }
 
-  // No-answer badge
-  const noAnswerBadge = !answer_found
-    ? `<div class="no-answer-badge">⚠️ No relevant information found in this document for this question.</div>`
+  // General knowledge badge if not strictly from document
+  const badgeHtml = (!answer_found && (!cits || cits.length === 0))
+    ? `<div class="general-knowledge-badge">💡 Note: Answer generated from general knowledge (not found in document)</div>`
     : '';
 
   msgs.insertAdjacentHTML('beforeend', `
@@ -399,10 +389,32 @@ function renderAnswer(msgs, data) {
       <span class="message-label">DocIntel AI</span>
       <div class="message-bubble">
         ${answerHtml}
-        ${noAnswerBadge}
+        ${badgeHtml}
       </div>
       ${citHtml}
     </div>`);
+
+  forceScrollBottom();
+}
+
+// ── Scrolling Helpers ─────────────────────────────────────────────────────────
+function handleChatScroll(el) {
+  const scrollBtn = document.getElementById('scroll-bottom-btn');
+  const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+  
+  if (distanceToBottom > 120) {
+    scrollBtn.style.display = 'flex';
+  } else {
+    scrollBtn.style.display = 'none';
+  }
+}
+
+function forceScrollBottom() {
+  const msgs = document.getElementById('chat-messages');
+  if (msgs) {
+    msgs.scrollTop = msgs.scrollHeight;
+    document.getElementById('scroll-bottom-btn').style.display = 'none';
+  }
 }
 
 // ── Citations Modal ───────────────────────────────────────────────────────────
@@ -445,8 +457,4 @@ function escapeHtml(str) {
 function escapeAttr(str) {
   if (!str) return '';
   return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
-}
-
-function scrollToBottom(el) {
-  el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
 }

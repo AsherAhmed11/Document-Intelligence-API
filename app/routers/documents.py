@@ -9,7 +9,6 @@ DELETE /documents/{document_id}   — delete document and its vectors
 import uuid
 from typing import List
 from fastapi import APIRouter, File, UploadFile, HTTPException, Depends, status
-from fastapi.responses import JSONResponse
 
 from app.models.document import (
     DocumentUploadResponse,
@@ -22,9 +21,14 @@ from app.services.document_service import DocumentService
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
+_document_service_instance: DocumentService | None = None
 
 def get_document_service(settings: Settings = Depends(get_settings)) -> DocumentService:
-    return DocumentService(settings)
+    """Singleton dependency for DocumentService to reuse ChromaDB connection."""
+    global _document_service_instance
+    if _document_service_instance is None:
+        _document_service_instance = DocumentService(settings)
+    return _document_service_instance
 
 
 @router.post(
@@ -34,7 +38,7 @@ def get_document_service(settings: Settings = Depends(get_settings)) -> Document
     summary="Upload a document",
     description=(
         "Upload a PDF, TXT, or DOCX file. The document will be parsed, chunked, "
-        "embedded with Gemini text-embedding-004, and stored in ChromaDB. "
+        "embedded with Gemini gemini-embedding-001, and stored in ChromaDB. "
         "Returns a document_id to use for all subsequent queries."
     ),
 )

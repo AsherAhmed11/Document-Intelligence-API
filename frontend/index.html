@@ -141,32 +141,51 @@
               <span id="chat-doc-meta"></span>
             </div>
           </div>
-          <button id="chat-close-btn" onclick="showUploadView()" title="Back to upload">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M4 9h10M9 4l-5 5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Back
-          </button>
+
+          <div id="chat-header-actions">
+            <!-- New Chat / Clear Chat button -->
+            <button id="new-chat-btn" onclick="startNewChat()" title="Start a fresh chat for this document">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              New Chat
+            </button>
+            <button id="chat-close-btn" onclick="showUploadView()" title="Back to upload">
+              <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
+                <path d="M4 9h10M9 4l-5 5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Upload
+            </button>
+          </div>
         </div>
 
-        <div id="chat-messages">
-          <div id="chat-welcome">
-            <div id="chat-welcome-icon">🤖</div>
-            <p>I've read <strong id="welcome-doc-name"></strong>. Ask me anything about it!</p>
-            <div id="suggested-questions"></div>
+        <div id="chat-messages-container">
+          <div id="chat-messages" onscroll="handleChatScroll(this)">
+            <div id="chat-welcome">
+              <div id="chat-welcome-icon">🤖</div>
+              <p>I've read <strong id="welcome-doc-name"></strong>. Ask me anything about it!</p>
+              <div id="suggested-questions"></div>
+            </div>
           </div>
+
+          <!-- Floating Scroll-to-bottom button -->
+          <button id="scroll-bottom-btn" style="display:none" onclick="forceScrollBottom()" title="Scroll to bottom">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
 
         <div id="chat-input-area">
           <div id="chat-input-wrap">
             <textarea 
               id="chat-input" 
-              placeholder="Ask a question about your document..."
+              placeholder="Ask a question about your document or general knowledge..."
               rows="1"
               onkeydown="handleChatKey(event)"
               oninput="autoResize(this)"
             ></textarea>
-            <button id="chat-send-btn" onclick="sendQuestion()" id="send-btn">
+            <button id="chat-send-btn" onclick="sendQuestion()">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M18 10L2 3l3 7-3 7 16-7z" fill="currentColor"/>
               </svg>

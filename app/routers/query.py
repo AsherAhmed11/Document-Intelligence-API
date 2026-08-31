@@ -3,10 +3,6 @@ Query router.
 
 Handles:
   POST /documents/{document_id}/query — ask a question, get a cited answer
-
-NOTE: The retrieval logic (vector search, context formatting, LLM call,
-citation extraction) lives in app/services/query_service.py.
-That is YOUR architecture to design — this router only handles HTTP.
 """
 from fastapi import APIRouter, HTTPException, Depends, status
 
@@ -16,10 +12,14 @@ from app.services.query_service import QueryService
 
 router = APIRouter(prefix="/documents", tags=["Query"])
 
+_query_service_instance: QueryService | None = None
 
 def get_query_service(settings: Settings = Depends(get_settings)) -> QueryService:
-    """Dependency that provides a QueryService instance."""
-    return QueryService(settings)
+    """Singleton dependency for QueryService to avoid re-opening ChromaDB on every request."""
+    global _query_service_instance
+    if _query_service_instance is None:
+        _query_service_instance = QueryService(settings)
+    return _query_service_instance
 
 
 @router.post(
@@ -29,7 +29,8 @@ def get_query_service(settings: Settings = Depends(get_settings)) -> QueryServic
     description=(
         "Ask a natural-language question about a previously uploaded document. "
         "Returns an LLM-generated answer with citations pointing back to the "
-        "exact source chunks that grounded it."
+        "exact source chunks that grounded it. If the information is not in the document, "
+        "provides a general knowledge response with clear notice."
     ),
 )
 async def query_document(
@@ -37,7 +38,7 @@ async def query_document(
     body: QueryRequest,
     service: QueryService = Depends(get_query_service),
 ) -> QueryResponse:
-    # Verify the document exists before querying
+    # Verify document exists
     exists = await service.document_exists(document_id)
     if not exists:
         raise HTTPException(
