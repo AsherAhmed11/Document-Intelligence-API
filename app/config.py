@@ -9,34 +9,35 @@ from functools import lru_cache
 class Settings(BaseSettings):
     # App
     app_name: str = "Document Intelligence API"
-    app_version: str = "0.1.0"
+    app_version: str = "0.2.0"
     debug: bool = False
 
-    # Providers & Models
-    llm_provider: Literal["openai", "bytez", "huggingface"] = "huggingface"
-    llm_model: str = "meta-llama/Llama-3.3-70B-Instruct"
-    embedding_provider: Literal["local", "openai", "bytez", "huggingface"] = "local"
+    # ── Providers ──────────────────────────────────────────────────────────────
+    # gemini = Google Gemini API (recommended — free tier, zero local RAM)
+    # openai = OpenAI API
+    # local  = sentence-transformers (NOT suitable for Railway free tier)
+    llm_provider: Literal["gemini", "openai", "huggingface"] = "gemini"
+    llm_model: str = "gemini-3.6-flash"
 
-    # API Keys
-    openai_api_key: str | None = None
-    bytez_api_key: str | None = None
-    hf_api_key: str | None = None
+    embedding_provider: Literal["gemini", "openai", "local", "huggingface"] = "gemini"
+    embedding_model: str = "gemini-embedding-001"
 
-    # ChromaDB
+    # ── API Keys ───────────────────────────────────────────────────────────────
+    gemini_api_key: str | None = None       # Google AI Studio key
+    openai_api_key: str | None = None       # Legacy / backup
+    hf_api_key: str | None = None           # HuggingFace backup
+    bytez_api_key: str | None = None        # Legacy
+
+    # ── ChromaDB ───────────────────────────────────────────────────────────────
     chroma_persist_directory: str = "./chroma_store"
     chroma_collection_name: str = "documents"
 
-    # Embedding model
-    # - For Railway free tier (512MB RAM): sentence-transformers/all-MiniLM-L6-v2  (~90MB, fast)
-    # - For self-hosted / Railway Pro (>1GB RAM): BAAI/bge-large-en-v1.5  (best accuracy, 1.3GB)
-    # Override this via EMBEDDING_MODEL env var in Railway Variables.
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    # ── Chunking ───────────────────────────────────────────────────────────────
+    # Max characters per chunk (paragraph-aware, no network calls needed)
+    chunk_max_chars: int = 1500
+    chunk_min_chars: int = 80
 
-    # Semantic chunker tuning — higher = fewer, larger chunks (better for dense legal text)
-    # Range: 80–99. Tune by inspecting chunks on your actual documents.
-    breakpoint_percentile: int = 95
-
-    # Upload limits
+    # ── Upload limits ──────────────────────────────────────────────────────────
     max_upload_size_mb: int = 20
     allowed_extensions: list[str] = ["pdf", "txt", "docx"]
 

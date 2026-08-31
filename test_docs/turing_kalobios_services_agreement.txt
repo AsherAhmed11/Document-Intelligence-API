@@ -1,0 +1,48 @@
+SERVICES AGREEMENT
+
+This Services Agreement ("Agreement") is dated as of August 7, 2015 ("Effective Date"), by and between Turing Pharmaceuticals LLC, a Delaware limited liability company ("Service Provider"), and KaloBios Pharmaceuticals, Inc., a Delaware corporation ("Company").
+
+1. SERVICES
+1.1 Service Provider shall perform the services set forth in the Statements of Work attached hereto as Exhibit A (the "Services").
+1.2 Service Provider shall perform the Services in a professional and workmanlike manner.
+
+2. COMPENSATION
+2.1 Company shall pay Service Provider the fees set forth in the applicable Statement of Work.
+2.2 Company shall reimburse Service Provider for reasonable, pre-approved out-of-pocket expenses incurred in the performance of the Services.
+
+3. INTELLECTUAL PROPERTY
+3.1 All deliverables and work product created by Service Provider in the performance of the Services shall be the sole and exclusive property of Company.
+3.2 Service Provider hereby assigns to Company all right, title, and interest in and to such deliverables and work product.
+
+4. CONFIDENTIALITY
+4.1 Each Party shall maintain the confidentiality of all proprietary or confidential information of the other Party disclosed under this Agreement.
+
+5. TERM AND TERMINATION
+5.1 This Agreement shall commence on the Effective Date and shall continue until completed or terminated in accordance with this Section 5.
+5.2 Either Party may terminate this Agreement for convenience upon thirty (30) days' written notice to the other Party.
+5.3 Either Party may terminate this Agreement immediately for cause if the other Party materially breaches any provision of this Agreement.
+
+6. INDEMNIFICATION AND LIMITATION OF LIABILITY
+6.1 Each Party shall indemnify and hold harmless the other Party from and against any third-party claims arising out of the indemnifying Party's gross negligence or willful misconduct.
+6.2 Neither Party shall be liable for any indirect, incidental, or consequential damages.
+
+7. MISCELLANEOUS
+7.1 This Agreement contains the entire agreement of the parties relating to the terms and conditions of the Service Provider's engagement.
+7.2 No modifications of this Agreement shall be valid unless made in writing and signed by the parties.
+7.3 This Agreement shall be governed by and construed in accordance with the laws of the State of New York.
+
+IN WITNESS WHEREOF, the undersigned parties have executed this Agreement as of the day and year first set forth above.
+
+Service Provider:
+TURING PHARMACEUTICALS LLC
+By: /s/ Martin Shkreli
+Name: Martin Shkreli
+Title: Chief Executive Officer
+
+Company:
+KALOBIOS PHARMACEUTICALS, Inc.
+By: /s/ Herb Cross
+Name: Herb Cross
+Title: Chief Financial Officer
+
+Source: SEC EDGAR via contracts.onecle.com — KaloBios Pharmaceuticals (KBIO) Services Agreement Exhibit

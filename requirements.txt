@@ -4,23 +4,19 @@ pydantic>=2.7.0
 pydantic-settings>=2.3.0
 python-multipart>=0.0.9       # required for UploadFile support
 
-# Document parsing — pick what you need
+# Document parsing
 PyMuPDF>=1.24.0               # PDF text extraction (fitz)
 python-docx>=1.1.0            # DOCX support
-# pdfplumber>=0.11.0          # Alternative PDF parser — compare both
 
-# Vector store & embeddings
+# Vector store
 chromadb>=0.5.0
-openai>=1.35.0
-sentence-transformers>=3.0.0
 
-# LangChain — text splitters + semantic chunker
-langchain-experimental>=0.0.61
-langchain-openai>=0.1.0
-langchain-community>=0.2.0      # HuggingFaceEmbeddings used by chunker.py
+# Google Gemini — embeddings (text-embedding-004) + LLM (gemini-2.0-flash)
+# Zero local RAM: all inference runs on Google's servers
+google-generativeai>=0.8.0
 
 # Dev / testing
-python-dotenv>=1.0.0            # for compare_embeddings script
-httpx>=0.27.0                   # for TestClient
+python-dotenv>=1.0.0
+httpx>=0.27.0
 pytest>=8.2.0
 pytest-asyncio>=0.23.0
